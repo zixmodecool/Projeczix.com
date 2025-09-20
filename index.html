@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Downloader Zix</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png" type="image/png">
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker terpasang"))
+        .catch(err => console.error("SW gagal:", err));
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1f4037, #99f2c8);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      background: rgba(0,0,0,0.6);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      color: #ffeb3b;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+    button {
+      cursor: pointer;
+      background: linear-gradient(90deg, #ff3cac, #784ba0, #2b86c5);
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #eee;
+      word-wrap: break-word;
+    }
+    .result a {
+      display: block;
+      margin-top: 12px;
+      padding: 10px;
+      background: #4caf50;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+    }
+    .credit {
+      margin-top: 25px;
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="icon.png" alt="Zix Logo" width="80" style="border-radius:16px; margin-bottom:15px;">
+    <h1>Downloader versi Zix</h1>
+    <input type="text" id="videoUrl" placeholder="Tempel tautan TikTok">
+    <button onclick="downloadVideo()">Download</button>
+    <div class="result" id="result"></div>
+    <div class="credit">PWA TikTok Downloader by Zix</div>
+  </div>
+
+  <script>
+    async function downloadVideo() {
+      const url = document.getElementById("videoUrl").value;
+      const result = document.getElementById("result");
+
+      if (!url) {
+        result.innerHTML = "⚠️ Masukkan URL TikTok dulu!";
+        return;
+      }
+
+      result.innerHTML = "⏳ Memproses...";
+
+      try {
+        const response = await fetch(`https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`);
+        const data = await response.json();
+
+        if (data.data && data.data.play) {
+          result.innerHTML = `
+            ✅ Video ditemukan!<br>
+            Judul: ${data.data.title}<br>
+            <a href="${data.data.play}" download target="_blank">Download Tanpa Watermark</a>
+            <a href="${data.data.wmplay}" download target="_blank">Download Dengan Watermark</a>
+            <a href="${data.data.music}" download target="_blank">Download Musik</a>
+          `;
+        } else {
+          result.innerHTML = "❌ Gagal: Tidak ada hasil dari API";
+        }
+      } catch (err) {
+        result.innerHTML = "⚠️ Error koneksi ke API.";
+      }
+    }
+  </script>
+</body>
+</html>
